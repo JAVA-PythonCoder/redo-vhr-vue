@@ -1,4 +1,32 @@
+// 定义node.js请求转发配置
+
+// proxyObj是请求转发对象，proxyObj['/']表示拦截http请求
+let proxyObj = {};
+proxyObj['/'] = {
+  // ws表示webSocket，关闭webSocket
+  ws: false,
+  // target表示将请求转发去的目的地址
+  target: 'http://localhost:8090',
+  changeOrigin: true,
+  // pathRewrite表示请求地址是否重写
+  pathRewrite: {
+    // '^/'表示拦截到的地址，对应的值是拦截后是否重写地址
+    '^/': ''
+  }
+}
+
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
-  transpileDependencies: true
+  transpileDependencies: true,
+  // devServer开发环境服务配置
+  devServer: {
+    // host指定转发来源地址
+    host: 'localhost',
+    // port指定转发来源端口
+    port: 8080,
+    // proxy指定转发目的的代理配置
+    proxy: proxyObj
+  }
 })
+
+

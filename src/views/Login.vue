@@ -24,6 +24,9 @@
 </template>
 
 <script>
+// 导入api.js中的请求配置
+import { postKeyValueRequest } from '../utils/api.js'
+
 export default {
 	name: "Login",
 	data() {
@@ -47,7 +50,15 @@ export default {
 			// $refs是Vue实例属性持有注册过ref属性的所有DOM元素和组件实例
 			this.$refs.loginForm.validate((valid) => {
 				if (valid) {
-					alert('submit!');
+					// 调用post方式的网络请求，地址/doLogin，参数是loginForm。then(resp)表示这个请求执行后的回调，resp是请求获取到的服务端响应信息（因为在axios中的响应拦截器里处理过响应，该处resp信息是处理过返回的信息）
+					postKeyValueRequest('/doLogin', this.loginForm).then(resp => {
+						if (resp) {
+							// 如果拦截器返回了信息，则把该信息封装为JSON对象
+							console.log(resp);
+							let json = JSON.stringify(resp);
+							alert(json);
+						}
+					})
 				} else {
 					// $message弹框显示信息
 					this.$message('请完善信息');
