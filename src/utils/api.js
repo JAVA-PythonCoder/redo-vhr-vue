@@ -18,6 +18,9 @@ axios.interceptors.response.use(success => {
 		// 存在业务失败，无任何返回，则在请求调用的地方将拿不到任何数据
 		return;
 	}
+	if (success.data.msg) {
+		Message.success({message: success.data.msg});
+	}
 	// 无业务失败，则返回后端返回的JSON对象，在请求调用的地方就能拿到后端返回的数据
 	return success.data;
 
@@ -54,7 +57,7 @@ export const postKeyValueRequest = (url, params) => {
 		method: 'post',
 		// url指定请求地址
 		url: `${base}${url}`,
-		// url: url，以上是参数拼接格式
+		// url: url，以上是字符串参数拼接格式
 		// data指定请求传递的参数，默认是JSON格式
 		data: params,
 		// transformRequest对请求的数据格式做转换，transformRequest和transformResponse必须要返回一个字符串，或 ArrayBuffer，或 Stream
@@ -78,3 +81,38 @@ export const postKeyValueRequest = (url, params) => {
 		
 	});
 }
+
+// 以下导出模块定义传递参数以JSON格式的网络请求：post、get、put、delete形式的网络请求
+// post、put请求向服务器端发送数据，改变服务器资源状态，不同的是put是幂等性的，post则不是，即前者无论操作多少次资源的种类不会增加（update），后者前后操作会增加资源种类(insert)。
+// get用于向服务器查询数据，是安全的不会改变服务器资源内容和种类(select)；delete向服务器删除资源(delete)，前后操作结果都一样
+export const postRequest = (url, params) => {
+	return axios({
+		method: 'post',
+		url: `${base}${url}`,
+		data: params
+	});
+};
+
+export const getRequest = (url, params) => {
+	return axios({
+		method: 'get',
+		url: `${base}${url}`,
+		data: params
+	});
+};
+
+export const deleteRequest = (url, params) => {
+	return axios({
+		method: 'delete',
+		url: `${base}${url}`,
+		data: params
+	});
+};
+
+export const putRequest = (url, params) => {
+	return axios({
+		method: 'put',
+		url: `${base}${url}`,
+		data: params
+	});
+};

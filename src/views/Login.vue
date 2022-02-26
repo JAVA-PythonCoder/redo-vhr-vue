@@ -25,7 +25,7 @@
 
 <script>
 // 导入api.js中的请求配置
-import { postKeyValueRequest } from '../utils/api.js'
+// import { postKeyValueRequest } from '../utils/api.js'
 
 export default {
 	name: "Login",
@@ -51,12 +51,21 @@ export default {
 			this.$refs.loginForm.validate((valid) => {
 				if (valid) {
 					// 调用post方式的网络请求，地址/doLogin，参数是loginForm。then(resp)表示这个请求执行后的回调，resp是请求获取到的服务端响应信息（因为在axios中的响应拦截器里处理过响应，该处resp信息是处理过返回的信息）
-					postKeyValueRequest('/doLogin', this.loginForm).then(resp => {
+					this.postKeyValueRequest('/doLogin', this.loginForm).then(resp => {
 						if (resp) {
-							// 如果拦截器返回了信息，则把该信息封装为JSON对象
-							console.log(resp);
-							let json = JSON.stringify(resp);
-							alert(json);
+							// 如果拦截器返回了信息，则把该信息存储在当前页面的sessionStorage中，key是'user'。
+							// sessionStorage设置的页面会话在浏览器打开期间一直保持，重新加载或恢复页面仍会保持原来的会话；
+							// 新窗口打开时将上层浏览器会话上下文作为新会话上下文；
+							// 打开多个相同的URL的tabs页面，会创建各自的sessionStorage；
+							// 关闭对应浏览器标签或窗口，会清除对应的sessionStorage；
+							window.sessionStorage.setItem('user', JSON.stringify(resp.obj));
+							
+							// 因在Vue中路由已通过Vue.use(Route)的方式注册到Vue中，main.js不同的是先直接将配置好的路由注册到Vue实例中。
+							// 而每个Vue的组件通过路由的方式注册到Vue实例中，对于Vue组件来说可通过this.$router的方式访问路由实例。
+							// this.$router当前Vue组件页面访问路由实例，replace、push均可实现路由跳转，push()参数可以是路由字符串、{path: ''}对象等，
+							// 不同的是push将当前页面压入history中，而replace则直接覆盖，即前者还可访问上一级页面，后者不行。
+							this.$router.replace({path: '/home'})
+							
 						}
 					})
 				} else {
