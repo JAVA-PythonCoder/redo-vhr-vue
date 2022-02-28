@@ -30,11 +30,14 @@
 				<el-aside width="200px">
 					<!-- el-menu导航栏。导航栏中菜单项的点击触发事件由el-menu属性select负责，select会从菜单项中接收两个参数index(选中菜单项(el-menu-item)的 index)和indexPath(选中菜单项的 index path) -->
 					<!-- router属性表示使用 vue-router 的模式，启用该模式会在激活导航时以 index 作为 path 进行路由跳转，即点击菜单项时触发index指向的地址	-->
-<!--					<el-menu @select="menuClick">-->
-					<el-menu router>
-						<!-- this.$router.options获取到的是路由配置对象router，	this.$router.options.routes则获取到是路由配置数组。因为在每个路由配置里添加了hidden属性作为过滤				-->
-						<el-submenu index="1" v-for="(item, index) in this.$router.options.routes" v-if="!item.hidden" :key="index">
-							<template slot="title"><i class="el-icon-message"></i>{{ item.name }}</template>
+					<!-- unique-opened表示只打开单一菜单					-->
+					<!-- <el-menu @select="menuClick">-->
+					<el-menu router unique-opened>
+						<!-- this.$router.options获取到的是路由配置对象router，	this.$router.options.routes则获取到是路由配置数组。因为在每个路由配置里添加了hidden属性作为过滤 -->
+						<!-- submenu中的index用于定位下拉列表，相同值的index下拉列表会同时触发 -->
+						<el-submenu :index="index + ''" v-for="(item, index) in routes" v-if="!item.hidden" :key="index">
+							<!-- i元素中的class属性用于可用于展示图标（本项目用的是font-awesome图标库）-->
+							<template slot="title"><i :class="item.iconCls" style="margin: 5px"></i>{{ item.name }}</template>
 								<el-menu-item :index="child.path" v-for="(child, indexj) in item.children" :key="indexj">{{ child.name }}</el-menu-item>
 						</el-submenu>
 					</el-menu>
@@ -42,6 +45,14 @@
 				</el-aside>
 				
 				<el-main>
+					<!-- this.$router.currentRoute获取当前页面的路由对象。el-breadcrumb是elementUI的面包屑导航-->
+					<el-breadcrumb separator-class="el-icon-arrow-right" v-if="this.$router.currentRoute.path != '/Home'">
+						<el-breadcrumb-item :to="{ path: '/Home' }">首页</el-breadcrumb-item>
+						<el-breadcrumb-item>{{ this.$router.currentRoute.name }}</el-breadcrumb-item>
+					</el-breadcrumb>
+					<div class="homeWelcome" v-if="this.$router.currentRoute.path == '/Home'">
+						欢迎来到人事管理系统
+					</div>
 					<router-view></router-view>
 				</el-main>
 				
@@ -59,6 +70,12 @@
 			return {
 				user: JSON.parse(window.sessionStorage.getItem('user'))
 			}
+		},
+		computed: {
+			routes() {
+				return this.$store.state.routes;
+			}
+			
 		},
 		methods: {
 			// 导航栏菜单项点击事件，默认会传递两个参数
@@ -81,6 +98,8 @@
 						// then()表示‘确定’的回调。发送到后端的/logout接口注销登录，同时删除sessionStorage中的用户信息，并跳转到登录页面
 						this.getRequest('/logout');
 						window.sessionStorage.removeItem('user');
+						// 用户退出登录时，要清空用户的vuex中的路由状态信息
+						this.$store.commit('initRoutes', []);
 						this.$router.replace('/');
 					}).catch(() => {
 						// catch()表示‘取消’的回调。因为在main.js中的Vue.use注册了element UI，所以可直接使用实例方法。
@@ -96,6 +115,16 @@
 </script>
 
 <style scoped>
+
+.homeWelcome {
+	text-align: center;
+	font-size: 30px;
+	font-family: 华文行楷;
+	color: #409eff;
+	padding-top: 50px;
+}
+
+
 .homeHeader {
 	background-color: #409eff;
 	display: flex;
@@ -126,5 +155,6 @@
 	display: flex;
 	align-items: center;
 }
+
 
 </style>

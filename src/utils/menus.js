@@ -13,8 +13,13 @@ export const initMenu = (router, store) => {
 		if (data) {
 			// 处理后端菜单数据
 			let fmtRoutes = formatRoutes(data);
-			// addRoute添加一条新的路由记录到路由表中（如果路由有一个 name，并且已经有一个与之名字相同的路由，它会先删除之前的路由。）
-			router.addRoute(fmtRoutes);
+			// Vue2中有两种向路由中添加路由记录的方法
+			// 1、addRoute添加一条新的路由记录到路由表中（如果路由有一个 name，并且已经有一个与之名字相同的路由，它会先删除之前的路由。）
+			// 2、addRoutes添加多条路由记录（该方法已标记废弃）
+			// fmtRoutes.forEach(route => {
+			// 	router.addRoute(route);
+			// })
+			router.addRoutes(fmtRoutes);
 			// commit()调用vuex的mutations中的initRoutes方法并传参fmtRoutes，初始化vuex中的state.routes状态。
 			store.commit('initRoutes', fmtRoutes);
 			
@@ -50,11 +55,24 @@ export const formatRoutes = (routes) => {
 			iconCls: iconCls,
 			meta: meta,
 			children: children,
-			// 对每个component属性处理。因为后端传来的component是JSON
+			// 对每个component属性处理。因为后端传来的component是JSON，需要在运行时判断动态地将每个组件模块引入
 			component(resolve) {
-				// JS中require本质上是赋值过程，在运行时调用。
-				// require基本用法：在导出的文件中使用model.exports{}/export{}对模块中的数据导出，使用require()引入到需要的文件中
-				require(['../router/' + component + '.vue'], resolve);
+				if (component.startsWith('Home')) {
+					// JS中require本质上是赋值过程，在运行时调用。
+					// require基本用法：在导出的文件中使用model.exports{}/exports{}对模块中的数据导出，使用require()引入到需要的文件中
+					require(['../views/' + component + '.vue'], resolve);
+				} else if (component.startsWith('Per')) {
+					require(['../views/per/' + component + '.vue'], resolve);
+				}else if (component.startsWith('Emp')) {
+					require(['../views/emp/' + component + '.vue'], resolve);
+				} else if (component.startsWith('Sal')) {
+					require(['../views/sal/' + component + '.vue'], resolve);
+				} else if (component.startsWith('Sta')) {
+					require(['../views/sta/' + component + '.vue'], resolve);
+				}else if (component.startsWith('Sys')){
+					require(['../views/sys/' + component + '.vue'], resolve);
+				}
+				
 			}
 		}
 		// 将处理好后的菜单添加到fmRoutes中

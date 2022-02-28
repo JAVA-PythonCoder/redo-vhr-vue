@@ -12,7 +12,8 @@
 			</el-form-item>
 			
 			<el-form-item label="密码" prop="password">
-				<el-input type="password" v-model="loginForm.password" autocomplete="off" placeholder="请输入密码"></el-input>
+				<!-- @keydown.enter.native表示焦点在密码框时回车提交，在vue里一般用@keydown.enter触发，当vue封装了第三方组件时如elementUI，则需要指定@keydown.enter.native提交 -->
+				<el-input type="password" v-model="loginForm.password" autocomplete="off" placeholder="请输入密码" @keydown.enter.native="loginSubmit"></el-input>
 				
 			</el-form-item>
 			
