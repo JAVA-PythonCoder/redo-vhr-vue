@@ -15,7 +15,7 @@ export default new Vuex.Store({
 	},
 	// mutations定义操作state中状态信息的方法
 	mutations: {
-		// initRoutes向state.routes里添加数据
+		// initRoutes向state.routes里初始化数据
 		initRoutes(state, data) {
 			state.routes = data;
 		}

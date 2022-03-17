@@ -5,7 +5,7 @@ let proxyObj = {};
 proxyObj['/'] = {
   // ws表示webSocket，关闭webSocket
   ws: false,
-  // target表示将请求转发去的目的地址
+  // target表示将请求转发去的目的地址。转发地址服务必须活跃，否则前端会显示无法跳转
   target: 'http://localhost:8090',
   changeOrigin: true,
   // pathRewrite表示请求地址是否重写

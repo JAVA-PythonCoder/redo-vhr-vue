@@ -61,11 +61,16 @@ export default {
 							// 关闭对应浏览器标签或窗口，会清除对应的sessionStorage；
 							window.sessionStorage.setItem('user', JSON.stringify(resp.obj));
 							
+							// 在vue-router中$router引用的是Vue.use(VueRouter)注册的全局组件且在Vue实例中定义了具体的路由信息，即$router访问的是全局路由定义信息；而$route引用的是当前页面的路由信息
+							// $route用法详见API文档，请求接口有查询参数（key=value）时，获取key对应的value
+							let path = this.$route.query.redirect;
+							
 							// 因在Vue中路由已通过Vue.use(Route)的方式注册到Vue中，main.js不同的是先直接将配置好的路由注册到Vue实例中。
 							// 而每个Vue的组件通过路由的方式注册到Vue实例中，对于Vue组件来说可通过this.$router的方式访问路由实例。
 							// this.$router当前Vue组件页面访问路由实例，replace、push均可实现路由跳转，push()参数可以是路由字符串、{path: ''}对象等，
 							// 不同的是push将当前页面压入history中，而replace则直接覆盖，即前者还可访问上一级页面，后者不行。
-							this.$router.replace({path: '/home'})
+							// 如果目的地址不是登录地址或跳转地址未定义，则在登录后直接跳转
+							this.$router.replace((path == '/' || path == undefined) ? {path: '/home'} : {path: path})
 							
 						}
 					})

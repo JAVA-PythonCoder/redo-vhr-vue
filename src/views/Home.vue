@@ -53,7 +53,7 @@
 					<div class="homeWelcome" v-if="this.$router.currentRoute.path == '/Home'">
 						欢迎来到人事管理系统
 					</div>
-					<router-view></router-view>
+					<router-view class="homeRouterView"></router-view>
 				</el-main>
 				
 			</el-container>
@@ -115,6 +115,10 @@
 </script>
 
 <style scoped>
+
+.homeRouterView{
+	margin-top: 10px;
+}
 
 .homeWelcome {
 	text-align: center;
