@@ -1,7 +1,8 @@
 // axios是vue主流网络请求工具，用于处理前后端网络交互。
 import axios from "axios";
 // element-ui的message对象用于处理弹框信息。统一解决不同页面网络请求弹框差异，避免在不同页面获取DOM处理。
-import { Message } from 'element-ui';
+import {Message} from 'element-ui';
+import router from '../router/index.js'
 
 
 // 本api用于封装全局的前后端网络交互（前端请求、后端响应），同时统一网络交互成功与否的弹框位置和显示的信息
@@ -30,11 +31,13 @@ axios.interceptors.response.use(success => {
 	if (error.response.status == 504) {
 		Message.error({message: '充当网关或代理的服务器，未及时从远端服务器获取请求'})
 	} else if (error.response.status == 404) {
-		Message.error({message: '服务器无法根据客户端的请求找到资源'})
+		Message.error({message: '服务端无法根据客户端的请求找到资源'})
 	} else if (error.response.status == 403) {
-		Message.error({message: '服务器理解请求客户端的请求，但是拒绝执行此请求'})
+		Message.error({message: '服务端接收请求，但用户权限不足被拒绝'})
 	}else if (error.response.status == 401) {
-		Message.error({message: '请求要求用户的身份认证'})
+		// 当会话失效时，请求服务端返回401异常装填码，利用vue路由跳转到登录页面
+		router.replace('/');
+		Message.error({message: '用户未登录，请登录'})
 	} else {
 		if (error.response.data.msg) {
 			Message.error({message: error.response.data.msg});

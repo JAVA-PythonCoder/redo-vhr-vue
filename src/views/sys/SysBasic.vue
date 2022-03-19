@@ -4,11 +4,11 @@
 		<!-- 对于复杂的页面，可将页面分为多个显示部分，将其封装为一个个的组件，再讲组件注册到当前页面中，同时在页面中引用组件	-->
 		<el-tabs v-model="activeName" type="card">
 			<!-- el-tab-pane是选项卡中的标签页，label选项卡标题	-->
-			<el-tab-pane label="部门管理" name="first"><DepMana></DepMana></el-tab-pane>
-			<el-tab-pane label="职位管理" name="second"><PosMana></PosMana></el-tab-pane>
-			<el-tab-pane label="职称管理" name="third"><JobLevelMana></JobLevelMana></el-tab-pane>
-			<el-tab-pane label="奖惩规则" name="fourth"><EcMana></EcMana></el-tab-pane>
-			<el-tab-pane label="权限组" name="five"><PermissionMana></PermissionMana></el-tab-pane>
+			<el-tab-pane label="部门管理" name="DepMana"><DepMana></DepMana></el-tab-pane>
+			<el-tab-pane label="职位管理" name="PosMana"><PosMana></PosMana></el-tab-pane>
+			<el-tab-pane label="职称管理" name="JobLevelMana"><JobLevelMana></JobLevelMana></el-tab-pane>
+			<el-tab-pane label="奖惩规则" name="EcMana"><EcMana></EcMana></el-tab-pane>
+			<el-tab-pane label="权限组" name="PermissionMana"><PermissionMana></PermissionMana></el-tab-pane>
 		</el-tabs>
 	</div>
 
@@ -25,7 +25,7 @@ export default {
 	name: "SysBasic",
 	data() {
 		return {
-			activeName: 'second'
+			activeName: 'JobLevelMana'
 			
 		}
 	},

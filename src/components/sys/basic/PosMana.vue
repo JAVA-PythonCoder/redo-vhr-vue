@@ -22,7 +22,8 @@
 					size="small"
 					stripe
 					@selection-change="handleSelectionChange"
-					style="width: 60%">
+					style="width: 70%">
+				<!-- 表格的多选框由type="selection"提供，且多选框被选中时，这行值val会传给el-table属性selection-change中绑定的方法处理 	-->
 				<el-table-column
 						type="selection"
 						width="55">
@@ -34,13 +35,22 @@
 				</el-table-column>
 				<el-table-column
 						prop="name"
-						label="姓名"
+						label="职位名称"
 						width="250">
 				</el-table-column>
 				<el-table-column
 						prop="createDate"
 						label="创建日期"
 						width="150">
+				</el-table-column>
+				<el-table-column
+						prop="enabled"
+						label="是否启用"
+						width="150">
+					<template slot-scope="scope">
+						<el-tag size="small" type="success" v-if="scope.row.enabled">启用</el-tag>
+						<el-tag size="small" type="danger" v-else>禁用</el-tag>
+					</template>
 				</el-table-column>
 				<el-table-column label="操作">
 					<!-- vue中插槽slot分为匿名插槽、具名插槽和作用域插槽（本例）。插槽即为slot元素，有name属性的为具名插槽。插槽的显示与不显示、怎么显示由父组件决定，而插槽位置由子组件决定，因为slot定义在子组件中，slot显示
@@ -63,19 +73,30 @@
 		
 		</div>
 		<!-- 在el-dialog中属性visible.sync值为true显示对话框，false关闭对话框	-->
-		<el-dialog
-				title="修改职位"
-				:visible.sync="dialogVisible"
-				width="30%">
-			<div>
-				<el-tag>职位名称</el-tag>
-				<el-input size="small" class="updatePosInput" v-model="updatePos.name"></el-input>
-			</div>
-			<span slot="footer" class="dialog-footer">
+		<div>
+			<el-dialog
+					title="修改职位"
+					:visible.sync="dialogVisible"
+					width="30%">
+				<div>
+					<el-tag>职位名称</el-tag>
+					<el-input size="small" class="updatePosInput" v-model="updatePos.name"></el-input>
+				</div>
+				<div style="margin-top: 5px">
+					<el-tag>是否启用</el-tag>
+					<el-switch
+							style="margin-left: 10px"
+							v-model="updatePos.enabled"
+							active-text="启用"
+							inactive-text="禁用">
+					</el-switch>
+				</div>
+				<span slot="footer" class="dialog-footer">
     <el-button size="small" @click="dialogVisible = false">取 消</el-button>
     <el-button size="small" type="primary" @click="updateConfirm">确 定</el-button>
   </span>
-		</el-dialog>
+			</el-dialog>
+		</div>
 		
 	</div>
 	
@@ -92,7 +113,8 @@ export default {
 			multipleSelection: [],
 			dialogVisible: false,
 			updatePos: {
-				name: ''
+				name: '',
+				enabled: false
 			},
 			// positions用来接收JSON数据
 			positions: []
@@ -135,7 +157,7 @@ export default {
 			
 		},
 		updateConfirm() {
-			if (this.updatePos.name != this.pos.name) {
+			if (this.updatePos.name != this.pos.name || this.updatePos.enabled != this.pos.name) {
 				this.putRequest('/system/basic/pos/', this.updatePos).then(resp => {
 					if (resp) {
 						this.dialogVisible = false;
