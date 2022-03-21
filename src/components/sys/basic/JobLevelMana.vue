@@ -3,9 +3,10 @@
 		<div>
 			<el-input size="small" v-model="jb.name"  placeholder="添加职称..." prefix-icon="el-icon-plus" style="width: 300px"></el-input>
 			<el-select v-model="jb.titleLevel" placeholder="职称等级" size="small" style="margin-left: 5px; margin-right: 5px">
+				<!--	el-option是el-select里的下拉列表，key用于区分不同的值，label表示要显示的值，value表示提交去服务器的值 -->
 				<el-option
-						v-for="item in titleLevels"
-						:key="item"
+						v-for="(item, index) in titleLevels"
+						:key="index"
 						:label="item"
 						:value="item">
 				</el-option>
