@@ -2,7 +2,16 @@
 	<div>
 		<!-- el-form是ElementUI的表单元素，rules属性表示对表单输入值进行校验（具体的规则由rules指定）；model属性表示表单数据对象，即用户输入的值由model指定的对象接收；-->
 		<!-- 表单验证必须由rules、model配合，校验是通过rules.prop与model.prop是否匹配，做出响应行为 -->
-		<el-form v-bind:rules="rules" ref="loginForm" :model="loginForm" class="loginContainer">
+		<!-- v-loading绑定的值表示是否显示加载页，true表示显示加载页，false表示隐藏加载页 -->
+		<el-form
+				v-loading="loading"
+				element-loading-text="登录中..."
+				element-loading-spinner="el-icon-loading"
+				element-loading-background="rgba(0, 0, 0, 0.8)"
+				v-bind:rules="rules"
+				ref="loginForm"
+				:model="loginForm"
+				class="loginContainer">
 			<h3 class="loginTitle">系统登录</h3>
 			<!--	el-form-item表单项，prop定义表单项的名字便于查找，label表示表单项前的标签	-->
 			<el-form-item label="用户名" prop="username">
@@ -32,6 +41,7 @@ export default {
 	name: "Login",
 	data() {
 		return {
+			loading: false,
 			loginForm: {
 				username: 'root',
 				password: '1234'
@@ -51,8 +61,10 @@ export default {
 			// $refs是Vue实例属性持有注册过ref属性的所有DOM元素和组件实例
 			this.$refs.loginForm.validate((valid) => {
 				if (valid) {
+					this.loading = true;
 					// 调用post方式的网络请求，地址/doLogin，参数是loginForm。then(resp)表示这个请求执行后的回调，resp是请求获取到的服务端响应信息（因为在axios中的响应拦截器里处理过响应，该处resp信息是处理过返回的信息）
 					this.postKeyValueRequest('/doLogin', this.loginForm).then(resp => {
+						this.loading = false;
 						if (resp) {
 							// 如果拦截器返回了信息，则把该信息存储在当前页面的sessionStorage中，key是'user'。
 							// sessionStorage设置的页面会话在浏览器打开期间一直保持，重新加载或恢复页面仍会保持原来的会话；

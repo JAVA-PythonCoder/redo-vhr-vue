@@ -21,11 +21,9 @@
 					border
 					style="width: 70%"
 					@selection-change="handleSelectionChange">
-				<!-- 表格的多选框由type="selection"提供，且多选框被选中时，这行值val会传给el-table属性selection-change中绑定的方法处理 	-->
+				<!-- 表格的多选框必须要有一个el-table-column中提供type="selection"，且多选框被选中时，这行值val会传给el-table属性selection-change中绑定的方法处理 	-->
 				<el-table-column
 						type="selection"
-						prop="id"
-						label="编号"
 						width="55">
 				</el-table-column>
 				<el-table-column

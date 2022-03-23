@@ -1,14 +1,14 @@
 <template>
 	<div>
 		<div style="display: flex; justify-content: center">
-			<el-input v-model="hrName" placeholder="请通过用户名搜索" prefix-icon="el-icon-search" style="width: 400px; margin-right: 5px"></el-input>
-			<el-button type="primary" icon="el-icon-search">搜索</el-button>
+			<el-input v-model="keywords" placeholder="请通过用户名搜索" prefix-icon="el-icon-search" style="width: 400px; margin-right: 5px" @keydown.enter.native="doSearch"></el-input>
+			<el-button type="primary" icon="el-icon-search" @click="doSearch">搜索</el-button>
 		</div>
 		<div style="display: flex; flex-wrap: wrap; margin-top: 10px; justify-content: space-around">
 			<el-card class="box-card" v-for="(hr, index) in hrs" :key="index" style="width: 350px; margin-bottom: 20px">
 				<div slot="header" class="clearfix">
 					<span>{{ hr.name }}</span>
-					<el-button style="float: right; padding: 3px 0; color: red" icon="el-icon-delete"></el-button>
+					<el-button style="float: right; padding: 3px 0; color: red" icon="el-icon-delete" @click="delHr(hr)"></el-button>
 				</div>
 				<div>
 					<div style="width: 100%; display: flex; justify-content: center">
@@ -68,7 +68,7 @@ export default {
 			selectedRoles: [],
 			selectedRolesBk: [],
 			allRoles: [],
-			hrName: '',
+			keywords: '',
 			hrs: []
 		}
 	},
@@ -76,8 +76,28 @@ export default {
 		this.initHrs();
 	},
 	methods: {
-		arrSort(a, b) {
-			return a - b;
+		delHr(hr) {
+			this.$confirm('此操作将永久删除'+ hr.name +'操作员, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				this.deleteRequest('/system/hr/' + hr.id).then(resp => {
+					if (resp) {
+						this.initHrs();
+					}
+				})
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '已取消删除'
+				});
+			});
+			
+		},
+		doSearch() {
+			this.initHrs();
+			
 		},
 		// popover隐藏时触发更新hr的角色
 		updateHrRole(hr) {
@@ -118,7 +138,7 @@ export default {
 			this.putRequest('/system/hr/', hr);
 		},
 		initHrs() {
-			this.getRequest('/system/hr/').then(resp => {
+			this.getRequest('/system/hr/?keywords=' + this.keywords).then(resp => {
 				if (resp) {
 					this.hrs = resp;
 				}
